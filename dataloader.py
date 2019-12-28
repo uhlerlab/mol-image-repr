@@ -1,5 +1,6 @@
 import torch
 from torch.utils.data import Dataset, DataLoader
+from torch.utils.data.dataloader import default_collate
 import torchvision.transforms as Transforms
 
 import numpy as np
@@ -51,6 +52,11 @@ class MolImageDataset(Dataset):
         img = torch.cat(img, 0)
 
         return {'key': key, 'cpd_name': sample['CPD_NAME'], 'image': img, 'smiles': sample['SMILES']}
+
+
+def my_collate(batch):
+    batch = filter (lambda x:x is not None, batch)
+    return default_collate(batch)
 
 
 #def test_dataset(mode):
