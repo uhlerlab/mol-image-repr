@@ -23,4 +23,4 @@ def test_model():
         break
 
 if __name__ == '__main__':
-    test_model(mode='train')
+    test_model()
