@@ -1,6 +1,6 @@
 import torch
 import torch.nn as nn
-from torchvision.models import BasicBlock
+from torchvision.models.resnet import BasicBlock, conv1x1
 
 class Resnet18Features(nn.Module):
     def __init__(self, in_channels=5, norm_layer=nn.BatchNorm2d):
@@ -15,9 +15,12 @@ class Resnet18Features(nn.Module):
         self.maxpool = nn.MaxPool2d(kernel_size=3, stride=2, padding=1)
 
         self.layer1 = BasicBlock(64, 64, norm_layer=self.norm_layer)
-        self.layer2 = BasicBlock(64, 128, stride=2, norm_layer=self.norm_layer)
-        self.layer3 = BasicBlock(128, 256, stride=2, norm_layer=self.norm_layer)
-        self.layer4 = BasicBlock(256, 512, stride=2, norm_layer=self.norm_layer)
+        self.layer2 = BasicBlock(64, 128, stride=2, norm_layer=self.norm_layer, 
+                                 downsample=nn.Sequential(conv1x1(64, 128, stride=2), self.norm_layer(128)))
+        self.layer3 = BasicBlock(128, 256, stride=2, norm_layer=self.norm_layer,
+                                 downsample=nn.Sequential(conv1x1(128, 256, stride=2), self.norm_layer(256)))
+        self.layer4 = BasicBlock(256, 512, stride=2, norm_layer=self.norm_layer,
+                                 downsample=nn.Sequential(conv1x1(256, 512, stride=2), self.norm_layer(512)))
 
         self.avgpool = nn.AdaptiveAvgPool2d((1, 1))
 
