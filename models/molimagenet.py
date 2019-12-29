@@ -3,7 +3,7 @@ import torch.nn as nn
 from torchvision.models import resnet18
 
 from chemprop.features import get_atom_fdim, get_bond_fdim, mol2graph
-from chemprop.models import MPN
+from chemprop.models.mpn import MPN
 
 from types import SimpleNamespace
 
