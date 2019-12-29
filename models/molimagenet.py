@@ -36,6 +36,8 @@ class MolImageNet(nn.Module):
         args.atom_messages=False
         args.use_input_features=False
         args.features_only=False
+        args.no_cache=False
+        args.cuda = True
 
         feature_net = MPN(args)
         embed_net = nn.Sequential(nn.Linear(512, 512),
