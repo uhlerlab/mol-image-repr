@@ -1,6 +1,6 @@
 import torch
 import torch.nn as nn
-from resnet import Resnet18Features
+from .resnet import Resnet18Features
 
 from chemprop.features import get_atom_fdim, get_bond_fdim, mol2graph
 from chemprop.models.mpn import MPN
