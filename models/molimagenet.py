@@ -1,6 +1,6 @@
 import torch
 import torch.nn as nn
-from torchvision.models import resnet18
+from resnet import Resnet18Features
 
 from chemprop.features import get_atom_fdim, get_bond_fdim, mol2graph
 from chemprop.models.mpn import MPN
@@ -15,7 +15,7 @@ class MolImageNet(nn.Module):
         self.chemnet = self.get_chem_net()
 
     def get_image_net(self):
-        feature_net = resnet18(pretrained=False)
+        feature_net = Resnet18Features(in_channels=5)
         embed_net = nn.Sequential(nn.Linear(512, 512),
                                   nn.ReLU(inplace=True),
                                   nn.Linear(512, 512),
