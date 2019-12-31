@@ -39,6 +39,7 @@ class MolImageDataset(Dataset):
         img = [self.transforms(img[:,:,idx]) for idx in range(5)]
         img = torch.cat(img, 0)
 
+        return img
 
     def __getitem__(self, idx):
         '''Returns a dict corresponding to data sample for the provided index'''

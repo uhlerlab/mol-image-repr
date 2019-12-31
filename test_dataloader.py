@@ -1,7 +1,7 @@
-from dataloader import MolImageMismatchedDataset
+from dataloader import MolImageMismatchDataset
 
 def test_dataset(mode):
-    dataset = MolImageMismatchedDataset(datadir='data/images/',
+    dataset = MolImageMismatchDataset(datadir='data/images/',
                               metafile='data/metadata/datasplit1-test.csv',
                               mode=mode)
 
