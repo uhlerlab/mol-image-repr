@@ -33,6 +33,13 @@ class MolImageDataset(Dataset):
     def __len__(self):
         return len(self.metadata)
 
+    def load_img(self, key):
+        img = np.load(os.path.join(self.datadir, "%s.npz" % key))
+        img = img["sample"] # Shape 520 x 696 x 5
+        img = [self.transforms(img[:,:,idx]) for idx in range(5)]
+        img = torch.cat(img, 0)
+
+
     def __getitem__(self, idx):
         '''Returns a dict corresponding to data sample for the provided index'''
 
@@ -41,41 +48,50 @@ class MolImageDataset(Dataset):
 
         # load 5-channel image
         try:
-            img = np.load(os.path.join(self.datadir, "%s.npz" % key))
-            img = img["sample"] # Shape 520 x 696 x 5
+            img = self.load_img(key)
 
         except Exception as e:
             print(e)
             return None
 
-        img = [self.transforms(img[:,:,idx]) for idx in range(5)]
-        img = torch.cat(img, 0)
-
         return {'key': key, 'cpd_name': sample['CPD_NAME'], 'image': img, 'smiles': sample['SMILES']}
 
+class MolImageMismatchDataset(MolImageDataset):
+    def __init__(self, datadir, metafile, mode="train", mismatch_prob=0.5):
+        super(MolImageMismatchDataset, self).__init__(datadir=datadir, metafile=metafile, mode=mode)
+        self.mismatch_prob = mismatch_prob
+
+    def __getitem__(self, idx):
+        '''Returns a dict corresponding to data sample with probability of mismatch'''
+
+        sample_chem = self.metadata.iloc[idx]
+        key_chem = sample_chem['SAMPLE_KEY']
+
+        if self.mode == 'train':
+            matched = np.random.binomial(1, 1-self.mismatch_prob)
+            mismatch_idx = np.random.randint(len(self))
+        else:
+            matched = np.random.RandomState(seed=idx).binomial(1, 1-self.mismatch_prob)
+            mismatch_idx = np.random.RandomState(seed=idx).randint(len(self))
+
+        if matched:
+            sample_img = sample_chem
+            key_img = key_chem
+        else:
+            sample_img = self.metadata.iloc[mismatch_idx]
+            key_img = sample_img['SAMPLE_KEY']
+        
+        try:
+            img = self.load_img(key_img)
+
+        except Exception as e:
+            print(e)
+            return None
+
+        return {'key_chem': key_chem, 'key_img': key_img, 
+                'cpd_name': sample_chem['CPD_NAME'], 'image': img, 'smiles': sample_chem['SMILES'],
+                'target': matched}
 
 def my_collate(batch):
     batch = filter (lambda x:x is not None, batch)
     return default_collate(batch)
-
-
-#def test_dataset(mode):
-#    dataset = MolImageDataset(datadir='data/images/',
-#                              metafile='data/metadata/datasplit1-test.csv',
-#                              mode=mode)
-
-#    sample = dataset[0]
-    
-#    for k in sample.keys():
-#        print(k)
-#        try:
-#            print(sample[k].shape)
-#        except:
-#            print(sample[k])
-#
-#    return dataset
-
-# test code
-#if __name__ == '__main__':
-#    test_dataset(mode='train')
-#    test_dataset(mode='test')
