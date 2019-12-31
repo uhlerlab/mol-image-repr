@@ -2,11 +2,11 @@ import torch
 from torch.utils.data import DataLoader
 
 from models.molimagenet import model_dict
-from dataloader import MolImageDataset, my_collate
+from dataloader import MolImageMisMatchDataset, my_collate
 
 
 def test_model(name):
-    dataset = MolImageDataset(datadir='data/images/',
+    dataset = MolImageMismatchDataset(datadir='data/images/',
                               metafile='data/metadata/datasplit1-test.csv',
                               mode='train')
 
@@ -20,7 +20,10 @@ def test_model(name):
         for k in output.keys():
             print(k)
             print(output[k].shape)
-        break
+        loss = net.compute_loss(output, batch['target'])
+        print("Loss: %s" % loss)
+        acc = net.compute_acc(output, batch['target'])
+        print("Acc: %s" % acc / len(batch['target']))
 
 if __name__ == '__main__':
     test_model('molimagenet')

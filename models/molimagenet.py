@@ -1,5 +1,6 @@
 import torch
 import torch.nn as nn
+import torch.nn.functional as F
 from .resnet import Resnet18Features
 
 from chemprop.features import get_atom_fdim, get_bond_fdim, mol2graph
@@ -71,6 +72,17 @@ class MolImageNet(nn.Module):
 
         return {'image_embedding': image_batch, 'chem_embedding': mol_batch}
 
+    def compute_loss(self, outputs, targets):
+        L1_dist = torch.sum(torch.abs(outputs['image_embedding'] - outputs['chem_embedding']), dim=1)
+        targets = (targets*2)-1
+        return F.hinge_embedding_loss(L1_dist, targets, margin=1, reduction='mean')
+
+    def compute_acc(self, outputs, targets):
+        L1_dist = torch.sum(torch.abs(outputs['image_embedding'] - outputs['chem_embedding']), dim=1)
+        pred = L1_dist > 1
+        correct = pred.long().eq(targets.view(-1)).float().sum().item()
+        return correct
+
 
 class MolImageNetClass(nn.Module):
     def __init__(self):
@@ -117,5 +129,19 @@ class MolImageNetClass(nn.Module):
         logit = self.classifier(combined_feats)
 
         return {'image_embedding': image_batch, 'chem_embedding': mol_batch, 'logit': logit}
+
+    def compute_loss(self, outputs, targets):
+        '''Binary cross entropy loss function'''
+
+        outputs = outputs['logit']
+        return F.binary_cross_entropy_with_logits(outputs, targets, reduction='mean')
+
+    def compute_acc(self, outputs, targets):
+        '''Accuracy function'''
+        
+        outputs = outputs['logit']
+        pred = outputs>0
+        correct = pred.long().eq(targets.view(-1)).float().sum().item()
+        return correct
 
 model_dict = {'molimagenet': MolImageNet, 'molimagenetclass': MolImageNetClass}
