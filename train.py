@@ -20,6 +20,7 @@ def run_training(args, logger):
         net.cuda()
 
     # load data
+
     trainset = MolImageMismatchDataset(datadir=args.datadir, metafile=args.train_metafile, mode="train")
     testset = MolImageMismatchDataset(datadir=args.datadir, metafile=args.val_metafile, mode="val")
 
@@ -27,7 +28,8 @@ def run_training(args, logger):
     testloader = DataLoader(testset, batch_size=args.batch_size, drop_last=False, shuffle=False, num_workers=args.num_workers, collate_fn=my_collate)
 
     # setup optimizer
-    optimizer = optim.Adam([{'params': net.parameters(), 'lr': args.learning_rate, 'weight_decay': args.weight_decay}])
+    #optimizer = optim.Adam([{'params': net.parameters(), 'lr': args.learning_rate, 'weight_decay': args.weight_decay}])
+    optimizer = optim.SGD([{'params': net.parameters(), 'lr': args.learning_rate, 'weight_decay': args.weight_decay}], momentum=0.9)
     
 
     # main training loop

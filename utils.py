@@ -18,9 +18,9 @@ def setup_args():
     options.add_argument('--model', action="store", dest="model", default='molimagenetclass')
 
     # training parameters
-    options.add_argument('--batch-size', action="store", dest="batch_size", default=128, type=int)
+    options.add_argument('--batch-size', action="store", dest="batch_size", default=64, type=int)
     options.add_argument('--num-workers', action="store", dest="num_workers", default=10, type=int)
-    options.add_argument('-lr', '--learning-rate', action="store", dest="learning_rate", default=1e-4, type=float)
+    options.add_argument('-lr', '--learning-rate', action="store", dest="learning_rate", default=1e-2, type=float)
     options.add_argument('--max-epochs', action="store", dest="max_epochs", default=1000, type=int)
     options.add_argument('--weight-decay', action="store", dest="weight_decay", default=1e-5, type=float)
 
