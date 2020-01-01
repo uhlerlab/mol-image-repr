@@ -14,12 +14,12 @@ def get_default_args():
     args = SimpleNamespace()
     args.hidden_size=512
     args.bias=False
-    args.depth=3
+    args.depth=10
     args.dropout=0.0
     args.activation='ReLU'
     args.undirected=False
     args.ffn_hidden_size=None
-    args.atom_messages=False
+    args.atom_messages=True
     args.use_input_features=False
     args.features_only=False
     args.no_cache=False
