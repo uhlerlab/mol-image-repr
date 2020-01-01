@@ -2,19 +2,17 @@ import torch
 from torch.utils.data import DataLoader
 from torch import optim
 
-from dataloader import MolImageMismatchDataset
+from dataloader import MolImageMismatchDataset, my_collate
 from models.molimagenet import model_dict
-from train.utils import train_model, evaluate_model
-from utils import setup_args, setup_logger
+from training.utils import train_model, evaluate_model
+from utils import setup_args, setup_logger, save_checkpoint
 
 import os
 
 def run_training(args, logger):
-    # setup
-    os.makedirs(os.path.join(args.save_dir, "models"), exist_ok=True)
 
     # setup model
-    net = model_dict[args.model]
+    net = model_dict[args.model]()
 
     logger.info(net)
     
@@ -22,11 +20,11 @@ def run_training(args, logger):
         net.cuda()
 
     # load data
-    trainset = MolImageDataset(datadir=args.datadir, metafile=args.train_metafile, mode="train")
-    testset = MolImageDataset(datadir=args.datadir, metafile=args.val_metafile, mode="val")
+    trainset = MolImageMismatchDataset(datadir=args.datadir, metafile=args.train_metafile, mode="train")
+    testset = MolImageMismatchDataset(datadir=args.datadir, metafile=args.val_metafile, mode="val")
 
-    trainloader = DataLoader(trainset, batch_size=args.batch_size, drop_last=True, shuffle=True, num_workers=args.num_workers)
-    testloader = DataLoader(testset, batch_size=args.batch_size, drop_last=False, shuffle=False, num_workers=args.num_workers)
+    trainloader = DataLoader(trainset, batch_size=args.batch_size, drop_last=True, shuffle=True, num_workers=args.num_workers, collate_fn=my_collate)
+    testloader = DataLoader(testset, batch_size=args.batch_size, drop_last=False, shuffle=False, num_workers=args.num_workers, collate_fn=my_collate)
 
     # setup optimizer
     optimizer = optim.Adam([{'params': net.parameters(), 'lr': args.learning_rate, 'weight_decay': args.weight_decay}])
@@ -60,5 +58,6 @@ def run_training(args, logger):
 
 if __name__ == "__main__":
     args = setup_args()
+    os.makedirs(os.path.join(args.save_dir, "models"), exist_ok=True)
     logger = setup_logger(name="training_log", save_dir=args.save_dir)
     run_training(args, logger)

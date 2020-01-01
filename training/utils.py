@@ -1,3 +1,5 @@
+import torch
+
 def train_model(trainloader, model, optimizer, loss_fn, acc_fn, target_kw='target'):
     '''Method for training model (updating model params) based on given criterion'''
     
@@ -36,7 +38,7 @@ def evaluate_model(testloader, model, loss_fn, acc_fn, target_kw='target'):
     total_samples = 0
 
     for sample in testloader:
-        with torch.no_grad:
+        with torch.no_grad():
             output = model(sample)
             target = sample[target_kw]
             batch_size = len(target)

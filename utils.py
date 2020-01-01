@@ -1,18 +1,21 @@
+import torch
+
 import argparse
 import logging
+import os
 
 def setup_args():
 
     options = argparse.ArgumentParser()
     # save and directory options
-    options.add_argument('--data-dir', action="store", default="data/images/")
+    options.add_argument('--datadir', action="store", default="data/images/")
     options.add_argument('--train-metafile', action="store", default="data/metadata/datasplit1-train.csv")
     options.add_argument('--val-metafile', action="store", default="data/metadata/datasplit1-val.csv")
     options.add_argument('--save-dir', action="store", default='results/test/')
     options.add_argument('--save-freq', action="store", default=1, type=int)
 
     # model parameters
-    options.add_argument('--model', action="store", dest="model", default='molimageclassnet')
+    options.add_argument('--model', action="store", dest="model", default='molimagenetclass')
 
     # training parameters
     options.add_argument('--batch-size', action="store", dest="batch_size", default=128, type=int)
@@ -26,7 +29,7 @@ def setup_args():
 
     return options.parse_args()
 
-def create_logger(name, save_dir):
+def setup_logger(name, save_dir):
     logger = logging.getLogger(name)
     logger.setLevel(logging.DEBUG)
 
@@ -36,3 +39,6 @@ def create_logger(name, save_dir):
     logger.addHandler(fh)
 
     return logger
+
+def save_checkpoint(model, filename):
+    torch.save(model.cpu().state_dict(), filename)

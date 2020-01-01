@@ -94,5 +94,5 @@ class MolImageMismatchDataset(MolImageDataset):
                 'target': matched}
 
 def my_collate(batch):
-    batch = filter (lambda x:x is not None, batch)
+    batch = list(filter (lambda x:x is not None, batch))
     return default_collate(batch)
