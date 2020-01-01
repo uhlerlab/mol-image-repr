@@ -73,11 +73,19 @@ class MolImageNet(nn.Module):
         return {'image_embedding': image_batch, 'chem_embedding': mol_batch}
 
     def compute_loss(self, outputs, targets):
+
+        if next(self.parameters()).is_cuda:
+            targets = targets.cuda()
+
         L1_dist = torch.sum(torch.abs(outputs['image_embedding'] - outputs['chem_embedding']), dim=1)
         targets = (targets*2)-1
         return F.hinge_embedding_loss(L1_dist, targets, margin=1, reduction='mean')
 
     def compute_acc(self, outputs, targets):
+        
+        if next(self.parameters()).is_cuda:
+            targets = targets.cuda()
+        
         L1_dist = torch.sum(torch.abs(outputs['image_embedding'] - outputs['chem_embedding']), dim=1)
         pred = L1_dist > 1
         correct = pred.long().eq(targets.view(-1)).float().sum().item()
@@ -133,15 +141,21 @@ class MolImageNetClass(nn.Module):
     def compute_loss(self, outputs, targets):
         '''Binary cross entropy loss function'''
 
+        if next(self.parameters()).is_cuda:
+            targets = targets.cuda()
+        
         outputs = outputs['logit']
-        return F.binary_cross_entropy_with_logits(outputs, targets, reduction='mean')
+        return F.binary_cross_entropy_with_logits(outputs, targets.view(-1,1).float(), reduction='mean')
 
     def compute_acc(self, outputs, targets):
         '''Accuracy function'''
         
+        if next(self.parameters()).is_cuda:
+            targets = targets.cuda()
+        
         outputs = outputs['logit']
         pred = outputs>0
-        correct = pred.long().eq(targets.view(-1)).float().sum().item()
+        correct = pred.long().eq(targets.view(-1,1)).float().sum().item()
         return correct
 
 model_dict = {'molimagenet': MolImageNet, 'molimagenetclass': MolImageNetClass}
