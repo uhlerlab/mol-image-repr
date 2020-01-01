@@ -32,7 +32,7 @@ class MolImageDataset(Dataset):
         self.mode = mode
 
     def __len__(self):
-        return len(self.num_samples)
+        return self.num_samples
 
     def load_img(self, key):
         img = np.load(os.path.join(self.datadir, "%s.npz" % key))
