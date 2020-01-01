@@ -22,7 +22,7 @@ def train_model(trainloader, model, optimizer, loss_fn, acc_fn, target_kw='targe
         loss.backward()
         optimizer.step()
 
-        total_loss += loss.item()
+        total_loss += loss.item()*batch_size
         total_acc += acc
         total_samples += batch_size
 
@@ -46,7 +46,7 @@ def evaluate_model(testloader, model, loss_fn, acc_fn, target_kw='target'):
             loss = loss_fn(output, target)
             acc = acc_fn(output, target)
 
-        total_loss += loss.item()
+        total_loss += loss.item()*batch_size
         total_acc += acc
         total_samples += batch_size
 
