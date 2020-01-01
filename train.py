@@ -2,7 +2,7 @@ import torch
 from torch.utils.data import DataLoader
 from torch import optim
 
-from dataloader import MolImageMismatchDataset, my_collate
+from dataset.dataloader import MolImageMismatchDataset, my_collate
 from models.molimagenet import model_dict
 from training.utils import train_model, evaluate_model
 from utils import setup_args, setup_logger, save_checkpoint

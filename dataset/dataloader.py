@@ -9,20 +9,21 @@ import pandas as pd
 import os
 
 class MolImageDataset(Dataset):
-    def __init__(self, datadir, metafile, mode="train"):
+    def __init__(self, datadir, metafile, mode="train", num_samples=None):
         self.datadir = datadir
         self.metadata = pd.read_csv(metafile)
+        self.num_samples = num_samples if num_samples is not None else len(self.metadata)
 
         if mode == 'train':
             self.transforms = Transforms.Compose([Transforms.ToPILImage(),
-                                                 Transforms.RandomCrop(224),
+                                                 Transforms.RandomCrop(512),
                                                  Transforms.RandomVerticalFlip(),
                                                  Transforms.RandomHorizontalFlip(),
                                                  Transforms.ToTensor(),
                                                  ])
         elif mode == 'val' or mode == 'test':
             self.transforms = Transforms.Compose([Transforms.ToPILImage(),
-                                                 Transforms.CenterCrop(224),
+                                                 Transforms.CenterCrop(512),
                                                  Transforms.ToTensor()
                                                  ])
         else:
@@ -31,7 +32,7 @@ class MolImageDataset(Dataset):
         self.mode = mode
 
     def __len__(self):
-        return len(self.metadata)
+        return len(self.num_samples)
 
     def load_img(self, key):
         img = np.load(os.path.join(self.datadir, "%s.npz" % key))
@@ -58,8 +59,8 @@ class MolImageDataset(Dataset):
         return {'key': key, 'cpd_name': sample['CPD_NAME'], 'image': img, 'smiles': sample['SMILES']}
 
 class MolImageMismatchDataset(MolImageDataset):
-    def __init__(self, datadir, metafile, mode="train", mismatch_prob=0.5):
-        super(MolImageMismatchDataset, self).__init__(datadir=datadir, metafile=metafile, mode=mode)
+    def __init__(self, datadir, metafile, mode="train", mismatch_prob=0.5, num_samples=None):
+        super(MolImageMismatchDataset, self).__init__(datadir=datadir, metafile=metafile, mode=mode, num_samples=num_samples)
         self.mismatch_prob = mismatch_prob
 
     def __getitem__(self, idx):

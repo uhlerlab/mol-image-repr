@@ -1,4 +1,4 @@
-from dataloader import MolImageMismatchDataset
+from dataset.dataloader import MolImageMismatchDataset
 
 def test_dataset(mode):
     dataset = MolImageMismatchDataset(datadir='data/images/',
