@@ -2,7 +2,7 @@ import torch
 from torch.utils.data import DataLoader
 from torch import optim
 
-from dataloader import MolImageDataset
+from dataloader import MolImageMismatchDataset
 from models.molimagenet import model_dict
 from train.utils import train_model, evaluate_model
 from utils import setup_args, setup_logger
@@ -38,10 +38,10 @@ def run_training(args, logger):
     for epoch in range(args.max_epochs):
         logger.info("Epoch %s:" % epoch)
 
-        train_summary = train_model(trainloader=trainloader, model=net, optimizer=optimizer, loss_fn=net.loss_fn, acc_fn=net.acc_fn)
+        train_summary = train_model(trainloader=trainloader, model=net, optimizer=optimizer, loss_fn=net.compute_loss, acc_fn=net.compute_acc)
         logger.info("Training summary: %s" % train_summary)
 
-        test_summary = evaluate_model(testloader=testloader, model=net, loss_fn=net.loss_fn, acc_fn=net.acc_fn)
+        test_summary = evaluate_model(testloader=testloader, model=net, loss_fn=net.compute_loss, acc_fn=net.compute_acc)
         logger.info("Evaluation summary: %s" % test_summary)
 
         if epoch % args.save_freq == 0:
