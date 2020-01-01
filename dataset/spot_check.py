@@ -12,6 +12,8 @@ class MolImageSpotCheck(object):
         self.datadir = datadir
         self.metadata = pd.read_csv(metafile)
         self.savedir = savedir
+        os.makedirs(self.savedir, exist_ok=True)
+
 
         if mode == 'train':
             self.transforms = Transforms.Compose([Transforms.ToPILImage(),
@@ -35,15 +37,15 @@ class MolImageSpotCheck(object):
         print("Saving %s" % key)
         img = np.load(os.path.join(self.datadir, "%s.npz" % key))
         img = img["sample"] # Shape 520 x 696 x 5
+        print(np.min(img), np.max(img))
         img = [self.transforms(img[:,:,idx]) for idx in range(5)]
 
         for idx, im in enumerate(img):
-            print(min(im), max(im))
             im.save(os.path.join(self.savedir, "%s_%s.png" % (key, idx)))
 
 if __name__ == "__main__":
-    dataset = MolImageSpotCheck(datadir='data/images/',
-                              metafile='data/metadata/datasplit1-test.csv',
-                              mode=mode)
+    dataset = MolImageSpotCheck(datadir='../data/images/',
+                              metafile='../data/metadata/datasplit1-test.csv',
+                              mode='train')
     for idx in range(10):
         dataset.save_img(idx)
