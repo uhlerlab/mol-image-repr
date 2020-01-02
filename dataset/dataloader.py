@@ -16,9 +16,7 @@ class MolImageDataset(Dataset):
 
         if mode == 'train':
             self.transforms = Transforms.Compose([Transforms.ToPILImage(),
-                                                 Transforms.RandomCrop(512),
-                                                 Transforms.RandomVerticalFlip(),
-                                                 Transforms.RandomHorizontalFlip(),
+                                                 Transforms.CenterCrop(512),
                                                  Transforms.ToTensor(),
                                                  ])
         elif mode == 'val' or mode == 'test':
