@@ -19,10 +19,10 @@ class MolChemAdapter(AbstractDatasetAdapter):
 
     def load_metadata(self, metafile):
         if isinstance(metafile, list):
-            data = [pd.read_csv(f) for f in metafile]
+            data = [pd.read_csv(f, dtype=str) for f in metafile]
             return pd.concat(data, ignore_index=True)
         else:
-            return pd.read_csv(metafile)
+            return pd.read_csv(metafile, dtype=str)
 
     def iter_data(self, slice_element=None):
         s = slice_element or slice(0, len(self))
