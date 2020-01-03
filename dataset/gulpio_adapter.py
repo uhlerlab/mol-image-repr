@@ -13,8 +13,7 @@ class MolChemAdapter(AbstractDatasetAdapter):
         self.metadata = self.load_metadata(metafile)
         print(self.metadata.head())
         print(len(self))
-        self.transforms = Transforms.Compose([Transforms.ToPILImage(),
-                                                 ])
+    
     def __len__(self):
         return len(self.metadata)
 
@@ -31,7 +30,6 @@ class MolChemAdapter(AbstractDatasetAdapter):
         for idx in indices:
             sample = self.metadata.iloc[idx].to_dict()
             id = sample['SAMPLE_KEY']
-            print(id)
             frames = self.load_img(id)
             result = {'id': id, 'frames': frames, 'meta': sample}
             yield result
@@ -39,7 +37,7 @@ class MolChemAdapter(AbstractDatasetAdapter):
     def load_img(self, key):
         img = np.load(os.path.join(self.datadir, key+".npz"))
         img = img["sample"] # Shape 520 x 696 x 5
-        img = [self.transforms(img[:,:,idx]) for idx in range(5)]
+        img = [img[:,:,idx] for idx in range(5)]
         return img
 
 if __name__ == "__main__":
@@ -49,5 +47,5 @@ if __name__ == "__main__":
     ingestor = GulpIngestor(adapter,
                             output_folder='../data/gulpio/',
                             videos_per_chunk=1000,
-                            num_workers=1)
+                            num_workers=16)
     ingestor()
