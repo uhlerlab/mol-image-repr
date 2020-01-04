@@ -8,7 +8,7 @@ def setup_args():
 
     options = argparse.ArgumentParser()
     # save and directory options
-    options.add_argument('--datadir', action="store", default="data/images/")
+    options.add_argument('--datadir', action="store", default="data/gulpio/")
     options.add_argument('--train-metafile', action="store", default="data/metadata/datasplit1-train.csv")
     options.add_argument('--val-metafile', action="store", default="data/metadata/datasplit1-val.csv")
     options.add_argument('--save-dir', action="store", default='results/test/')
