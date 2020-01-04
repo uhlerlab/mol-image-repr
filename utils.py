@@ -40,5 +40,5 @@ def setup_logger(name, save_dir):
 
     return logger
 
-def save_checkpoint(model, filename):
-    torch.save(model.cpu().state_dict(), filename)
+def save_checkpoint(current_state, filename):
+    torch.save(current_state, filename)
