@@ -35,7 +35,7 @@ class MolImageGulpDataset(Dataset):
         return self.num_samples
 
     def load_img(self, key):
-        img, _ = self.gulpdir(key)
+        img, _ = self.gulpdir[key]
         img = [self.transforms(img[idx]) for idx in range(5)]
         img = torch.cat(img, 0)
 
