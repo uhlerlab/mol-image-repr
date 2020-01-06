@@ -28,5 +28,7 @@ def test_gulp_dataset(mode):
 
 # test code
 if __name__ == '__main__':
+    test_dataset(mode='train')
     test_dataset(mode='test')
+    test_gulp_dataset(mode='train')
     test_gulp_dataset(mode='test')
