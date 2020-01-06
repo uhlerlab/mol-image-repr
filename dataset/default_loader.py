@@ -1,6 +1,6 @@
 import torch
 from torch.utils.data import Dataset, DataLoader
-from transforms import get_train_transform, get_test_transform
+from .transforms import get_train_transform, get_test_transform
 
 import numpy as np
 import pandas as pd
