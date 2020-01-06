@@ -17,6 +17,7 @@ def setup_args():
 
     # model parameters
     options.add_argument('--model', action="store", dest="model", default='molimagenetclass')
+    options.add_argument('--dataset', action="store", dest="dataset", default='mismatch')
 
     # training parameters
     options.add_argument('--batch-size', action="store", dest="batch_size", default=64, type=int)

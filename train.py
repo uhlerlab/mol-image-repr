@@ -2,8 +2,7 @@ import torch
 from torch.utils.data import DataLoader
 from torch import optim
 
-from dataset.dataloader import MolImageMismatchDataset, my_collate
-#from dataset.gulpio_loader import MolImageMismatchGulpDataset, my_collate
+from dataset.dataloader import dataset_dict, my_collate
 from models.molimagenet import model_dict
 from training.utils import train_model, evaluate_model
 from utils import setup_args, setup_logger, save_checkpoint
@@ -21,12 +20,9 @@ def run_training(args, logger):
         net.cuda()
 
     # load data
-
-    #trainset = MolImageMismatchGulpDataset(datadir=args.datadir, metafile=args.train_metafile, mode="train")
-    #testset = MolImageMismatchGulpDataset(datadir=args.datadir, metafile=args.val_metafile, mode="val")
     
-    trainset = MolImageMismatchDataset(datadir=args.datadir, metafile=args.train_metafile, mode="train")
-    testset = MolImageMismatchDataset(datadir=args.datadir, metafile=args.val_metafile, mode="val")
+    trainset = dataset_dict[args.dataset](datadir=args.datadir, metafile=args.train_metafile, mode="train")
+    testset = dataset_dict[args.dataset](datadir=args.datadir, metafile=args.val_metafile, mode="val")
 
     trainloader = DataLoader(trainset, batch_size=args.batch_size, drop_last=True, shuffle=True, num_workers=args.num_workers, collate_fn=my_collate)
     testloader = DataLoader(testset, batch_size=args.batch_size, drop_last=False, shuffle=False, num_workers=args.num_workers, collate_fn=my_collate)

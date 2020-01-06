@@ -1,4 +1,4 @@
-from dataset.dataloader import MolImageMismatchDataset
+from dataset.default_loader import MolImageMismatchDataset
 from dataset.gulpio_loader import MolImageMismatchGulpDataset
 
 import time
