@@ -1,5 +1,6 @@
 import torch
 from torch.utils.data import DataLoader
+import numpy as np
 
 from dataset.dataloader import dataset_dict, my_collate
 from models.molimagenet import model_dict
@@ -7,8 +8,16 @@ from training.utils import train_model, evaluate_model
 from utils import setup_args, setup_logger, save_checkpoint, setup_optimizer, setup_lr_scheduler
 
 import os
+import random
 
 def run_training(args, logger):
+
+    # seed run
+    torch.manual_seed(args.seed)
+    np.random.seed(args.seed)
+    random.seed(args.seed)
+    if args.use_gpu:
+        torch.cuda.manual_seed(args.seed)
 
     # setup model
     net = model_dict[args.model]()
