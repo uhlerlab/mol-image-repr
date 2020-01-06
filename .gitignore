@@ -1,0 +1,6 @@
+*.pyc
+*.ipynb
+
+data
+results
+dataset/examples
