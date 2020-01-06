@@ -32,6 +32,9 @@ def setup_args():
     # gpu options
     options.add_argument('--use-gpu', action="store_false", default=True)
 
+    # debugging mode
+    options.add_argument('--debug-mode', action="store_true", default=False)
+
     return options.parse_args()
 
 def setup_logger(name, save_dir):

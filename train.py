@@ -36,10 +36,12 @@ def run_training(args, logger):
     for epoch in range(args.max_epochs):
         logger.info("Epoch %s:" % epoch)
 
-        train_summary = train_model(trainloader=trainloader, model=net, optimizer=optimizer, loss_fn=net.compute_loss, acc_fn=net.compute_acc)
+        train_summary = train_model(trainloader=trainloader, model=net, optimizer=optimizer, loss_fn=net.compute_loss, acc_fn=net.compute_acc,
+                                    single_batch=args.debug_mode)
         logger.info("Training summary: %s" % train_summary)
 
-        test_summary = evaluate_model(testloader=testloader, model=net, loss_fn=net.compute_loss, acc_fn=net.compute_acc)
+        test_summary = evaluate_model(testloader=testloader, model=net, loss_fn=net.compute_loss, acc_fn=net.compute_acc,
+                                      single_batch=args.debug_mode)
         logger.info("Evaluation summary: %s" % test_summary)
 
         if scheduler is not None:

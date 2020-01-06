@@ -1,6 +1,6 @@
 import torch
 
-def train_model(trainloader, model, optimizer, loss_fn, acc_fn, target_kw='target'):
+def train_model(trainloader, model, optimizer, loss_fn, acc_fn, target_kw='target', single_batch=False):
     '''Method for training model (updating model params) based on given criterion'''
     
     model.train()
@@ -26,9 +26,12 @@ def train_model(trainloader, model, optimizer, loss_fn, acc_fn, target_kw='targe
         total_acc += acc
         total_samples += batch_size
 
+        if single_batch:
+            break
+
     return {'train_loss': total_loss / total_samples, 'train_acc': total_acc / total_samples}
 
-def evaluate_model(testloader, model, loss_fn, acc_fn, target_kw='target'):
+def evaluate_model(testloader, model, loss_fn, acc_fn, target_kw='target', single_batch=False):
     '''Method for evaluating model based on given criterion'''
     
     model.eval()
@@ -49,5 +52,8 @@ def evaluate_model(testloader, model, loss_fn, acc_fn, target_kw='target'):
         total_loss += loss.item()*batch_size
         total_acc += acc
         total_samples += batch_size
+
+        if single_batch:
+            break
 
     return {'test_loss': total_loss / total_samples, 'test_acc': total_acc / total_samples}
