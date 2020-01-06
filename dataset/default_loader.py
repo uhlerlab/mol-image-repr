@@ -1,6 +1,6 @@
 import torch
 from torch.utils.data import Dataset, DataLoader
-import torchvision.transforms as Transforms
+from transforms import get_train_transform, get_test_transform
 
 import numpy as np
 import pandas as pd
@@ -14,15 +14,9 @@ class MolImageDataset(Dataset):
         self.num_samples = num_samples if num_samples is not None else len(self.metadata)
 
         if mode == 'train':
-            self.transforms = Transforms.Compose([Transforms.ToPILImage(),
-                                                 Transforms.CenterCrop(512),
-                                                 Transforms.ToTensor(),
-                                                 ])
+            self.transforms = get_train_transform()
         elif mode == 'val' or mode == 'test':
-            self.transforms = Transforms.Compose([Transforms.ToPILImage(),
-                                                 Transforms.CenterCrop(512),
-                                                 Transforms.ToTensor()
-                                                 ])
+            self.transforms = get_test_transform()
         else:
             raise KeyError("mode %s is not valid, must be 'train' or 'val' or 'test'" % mode)
 
@@ -34,7 +28,7 @@ class MolImageDataset(Dataset):
     def load_img(self, key):
         img = np.load(os.path.join(self.datadir, "%s.npz" % key))
         img = img["sample"] # Shape 520 x 696 x 5
-        img = [self.transforms(img[:,:,idx]) for idx in range(5)]
+        img = self.transforms([img[:,:,idx] for idx in range(5)])
         img = torch.cat(img, 0)
 
         return img
