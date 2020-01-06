@@ -1,4 +1,5 @@
 import torch
+from torch import optim
 
 import argparse
 import logging
@@ -18,6 +19,8 @@ def setup_args():
     # model parameters
     options.add_argument('--model', action="store", dest="model", default='molimagenetclass')
     options.add_argument('--dataset', action="store", dest="dataset", default='mismatch')
+    options.add_argument('--optimizer', action="store", dest="optimizer", default='sgd')
+    options.add_argument('--scheduler', action="store", dest="scheduler", default='step')
 
     # training parameters
     options.add_argument('--batch-size', action="store", dest="batch_size", default=64, type=int)
@@ -44,3 +47,18 @@ def setup_logger(name, save_dir):
 
 def save_checkpoint(current_state, filename):
     torch.save(current_state, filename)
+
+def setup_optimizer(name, param_list):
+    if name == 'sgd':
+        return optim.SGD(param_list, momentum=0.9)
+    elif name == 'adam':
+        return optim.Adam(param_list)
+    else:
+        raise KeyError("%s is not a valid optimizer (must be one of ['sgd', adam']" % name)
+
+def setup_lr_scheduler(name, optimizer):
+    if name == 'none':
+        return None
+    elif name == 'step':
+        return optim.lr_scheduler.StepLR(optimizer=optimizer, step_size=10, gamma=0.5)
+    
