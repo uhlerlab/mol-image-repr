@@ -2,5 +2,7 @@
 *.ipynb
 
 data
+data_full
 results
 dataset/examples
+dataset/examples_gulp
