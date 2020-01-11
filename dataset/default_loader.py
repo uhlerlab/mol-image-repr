@@ -28,7 +28,8 @@ class MolImageDataset(Dataset):
     def load_img(self, key):
         img = np.load(os.path.join(self.datadir, "%s.npz" % key))
         img = img["sample"] # Shape 520 x 696 x 5
-        img = self.transforms([img[:,:,idx] for idx in range(5)])
+        img = [img[:,:,j] for j in range(5)]
+        img = self.transforms(img)
         img = torch.cat(img, 0)
 
         return img
