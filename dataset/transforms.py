@@ -23,3 +23,11 @@ def get_test_transform():
     video_transforms = [VideoToTensor(),]
 
     return ComposeVideo(img_transforms=img_transforms, video_transforms=video_transforms)
+
+def get_spot_check_transform():
+    
+    img_transforms = [CenterCrop(512),]
+    #video_transforms = [RandomCropVideo(512), RandHorFlipVideo(), RandVerFlipVideo(),]
+    video_transforms = [RandHorFlipVideo(), RandVerFlipVideo(),]
+
+    return ComposeVideo(img_transforms=img_transforms, video_transforms=video_transforms)
